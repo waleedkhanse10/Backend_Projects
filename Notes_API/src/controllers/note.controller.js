@@ -1,10 +1,11 @@
+import mongoose from "mongoose";
 import { Note } from "../models/note.model.js"
 
 const createNote = async (req, res) => {
     const { title, content, isPinned } = req.body;
 
-    if (!title.trim() === "" && !content.trim() === "") {
-        res.status(400).json({
+    if (!title?.trim() || !content?.trim()) {
+        return res.status(400).json({
             message: "title and content both are required and not empty"
         })
     }
@@ -16,7 +17,7 @@ const createNote = async (req, res) => {
     })
 
     if (!note) {
-        res.status(500).json({
+        return res.status(500).json({
             message: "Some issue in save the note in db"
         })
     }
@@ -31,7 +32,7 @@ const getNotes = async (req, res) => {
     const notes = await Note.find();
 
     if (!notes) {
-        res.status(404).json({
+        return res.status(404).json({
             message: "Notes not found!"
         })
     }
@@ -45,8 +46,14 @@ const getNotes = async (req, res) => {
 const getNote = async (req, res) => {
     const id = req.params.id;
 
+    if (!mongoose.isValidObjectId(id)) {
+        return res.status(400).json({
+            message: "invalid note id"
+        })
+    }
+
     if (!id) {
-        res.status(400).json({
+        return res.status(400).json({
             message: "id required"
         })
     }
@@ -54,7 +61,7 @@ const getNote = async (req, res) => {
     const note = await Note.findById(id);
 
     if (!note) {
-        res.status(404).json({
+        return res.status(404).json({
             message: "note not found!"
         })
     }
@@ -68,21 +75,28 @@ const getNote = async (req, res) => {
 const updateNote = async (req, res) => {
     const id = req.params.id;
 
+    if (!mongoose.isValidObjectId(id)) {
+        return res.status(400).json({
+            message: "invalid note id"
+        })
+    }
+
     if (!id) {
-        res.status(400).json({
+        return res.status(400).json({
             message: "id required"
         })
     }
 
     const updatedNote = req.body
 
-    const note = await Note.findOneAndReplace(
-        { _id: id },
-        { updatedNote }
+    const note = await Note.findByIdAndUpdate(
+        id,
+        updatedNote,
+        { new: true, runValidators: true }
     );
 
     if (!note) {
-        res.status(404).json({
+        return res.status(404).json({
             message: "Note not found!"
         })
     }
@@ -96,8 +110,14 @@ const updateNote = async (req, res) => {
 const deleteNote = async (req, res) => {
     const id = req.params.id;
 
+    if (!mongoose.isValidObjectId(id)) {
+        return res.status(400).json({
+            message: "invalid note id"
+        })
+    }
+
     if (!id) {
-        res.status(400).json({
+        return res.status(400).json({
             message: "id required"
         })
     }
@@ -105,7 +125,7 @@ const deleteNote = async (req, res) => {
     const note = await Note.findOneAndDelete({ _id: id })
 
     if (!note) {
-        res.status(404).json({
+        return res.status(404).json({
             message: "Note not found!"
         })
     }
