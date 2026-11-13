@@ -29,10 +29,11 @@ npm install
 ```env
 PORT=8000
 MONGO_URI=mongodb://localhost:27017
-```
 
-For MongoDB Atlas, use your connection string instead:
+// For MongoDB Atlas, use your connection string instead:
 `mongodb+srv://<username>:<password>@<cluster-url>`
+
+```
 
 The database name (`Notes_Api`) is added automatically in the code, so do not put it in `MONGO_URI`.
 
