@@ -1,6 +1,6 @@
 import "dotenv/config"
 import { app } from "./app"
-import connectDB from "./db/db"
+import connectDB from "./db/db.js"
 
 connectDB()
     .then(() => {

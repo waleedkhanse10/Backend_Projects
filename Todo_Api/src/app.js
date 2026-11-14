@@ -1,4 +1,5 @@
 import express, { urlencoded } from "express"
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
@@ -10,5 +11,6 @@ app.use(urlencoded({
     limit: '16kb'
 }))
 
+app.use(errorHandler)
 
 export { app }
