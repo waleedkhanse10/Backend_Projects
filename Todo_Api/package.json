@@ -1,0 +1,23 @@
+{
+  "name": "todo_api",
+  "version": "1.0.0",
+  "description": "Todo api",
+  "keywords": [
+    "todo",
+    "backend",
+    "node",
+    "express"
+  ],
+  "license": "ISC",
+  "author": "Waleed Khan",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0",
+    "mongoose": "^9.12.1"
+  }
+}
