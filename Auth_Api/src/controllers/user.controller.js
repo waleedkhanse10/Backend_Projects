@@ -100,7 +100,39 @@ const loginUser = asyncHandler(async (req, res) => {
     })
 })
 
+const logoutUser = asyncHandler(async (req, res) => {
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+        .status(200)
+        .clearCookie("token", options)
+        .json({
+            message: "user LoggedOut"
+        })
+})
+
+const getLoggedInUser = asyncHandler(async (req, res) => {
+    const user = req.user
+
+    if (!user) {
+        throw new ApiError(401, "You are not authorized")
+    }
+
+    res.status(200).json({
+        message: "User data",
+        user: {
+            "name": user.name,
+            "email": user.email
+        }
+    })
+})
+
 export {
     registerUser,
-    loginUser
+    loginUser,
+    logoutUser,
+    getLoggedInUser
 }
