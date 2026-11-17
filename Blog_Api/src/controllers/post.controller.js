@@ -27,11 +27,36 @@ const createPost = asyncHandler(async (req, res) => {
 })
 
 const getAllPosts = asyncHandler(async (req, res) => {
-    const posts = await Post.find().populate("author", "name").sort({ createdAt: -1 })
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const { search } = req.query;
+
+    const filter = {}
+
+    if (search) {
+        const safeSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+        filter.title = { $regex: safeSearch, $options: "i" }
+    }
+
+    const skip = (page - 1) * limit;
+
+    const posts = await Post.find(filter)
+        .populate("author", "name")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+
+    const total = await Post.countDocuments(filter)
+
+    const totalPages = Math.ceil(total / limit)
 
     return res.status(200).json({
         message: "All posts retrieved successfully",
-        posts
+        posts,
+        page,
+        limit,
+        total,
+        totalPages
     })
 })
 
