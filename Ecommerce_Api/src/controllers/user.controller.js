@@ -110,7 +110,7 @@ const logout = asyncHandler(async (req, res) => {
                 },
             },
             {
-                returnDocument: after
+                returnDocument: 'after'
             }
         );
     }
