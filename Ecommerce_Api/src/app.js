@@ -2,6 +2,7 @@ import express, { urlencoded } from "express";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import userRouter from "./routes/user.routes.js"
+import productRouter from './routes/product.routes.js'
 
 const app = express();
 
@@ -19,6 +20,8 @@ app.use(
 app.use(cookieParser());
 
 app.use('/api/v1/auth', userRouter)
+
+app.use('/api/v1/products', productRouter)
 
 app.use(errorHandler);
 

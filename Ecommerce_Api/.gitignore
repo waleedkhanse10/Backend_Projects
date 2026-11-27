@@ -125,3 +125,5 @@ dist
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Node
 
+public/temp/*
+!public/temp/.gitkeep

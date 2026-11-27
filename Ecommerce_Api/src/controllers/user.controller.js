@@ -39,7 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
     })
 
     if (existingUser) {
-        throw new ApiError(409, "user with this email already exists");
+        throw new ApiError(409, "user with this email or username already exists");
     }
 
     const user = await User.create({
@@ -61,22 +61,18 @@ const loginUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name && !email) {
-        throw new ApiError(400, "username or password is required")
+        throw new ApiError(400, "name or email is required")
     }
 
     if (!password) {
         throw new ApiError(400, "password are required")
     }
 
-    const user = await User.findOne({
-        $or: [
-            { name },
-            { email }
-        ]
-    });
+    const query = email ? { email } : { name };
+    const user = await User.findOne(query);
 
     if (!user) {
-        throw new ApiError(401, "invalid email or password");
+        throw new ApiError(401, `invalid email or password`);
     }
 
     const isPasswordValid = await user.isPasswordCorrect(password);
@@ -101,19 +97,17 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logout = asyncHandler(async (req, res) => {
-    if (req.user?._id) {
-        await User.findByIdAndUpdate(
-            req.user._id,
-            {
-                $unset: {
-                    refreshToken: 1
-                },
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $unset: {
+                refreshToken: 1
             },
-            {
-                returnDocument: 'after'
-            }
-        );
-    }
+        },
+        {
+            returnDocument: 'after'
+        }
+    );
 
     return res
         .status(200)
@@ -122,7 +116,10 @@ const logout = asyncHandler(async (req, res) => {
         .json({
             success: true,
             message: "user logged out successfully",
-            data: {},
+            data: {
+                name: req.user.name,
+                email: req.user.email
+            }
         });
 });
 
